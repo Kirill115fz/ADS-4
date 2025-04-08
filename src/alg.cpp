@@ -1,44 +1,59 @@
 // Copyright 2021 NNTU-CS
 int countPairs1(int *arr, int len, int value) {
-    int count = 0;
+    std::set<std::pair<int, int>> uniquePairs;
     for (int i = 0; i < len; ++i) {
         for (int j = i + 1; j < len; ++j) {
             if (arr[i] + arr[j] == value) {
-                count++;
+                uniquePairs.insert(std::make_pair(arr[i], arr[j]));
             }
         }
     }
-    return count;
+    return uniquePairs.size();
 }
 
-
-// Функция countPairs2: поиск с двух концов (упрощенный) (O(n))
 int countPairs2(int *arr, int len, int value) {
-    int count = 0;
+    std::set<std::pair<int, int>> uniquePairs;
     int left = 0, right = len - 1;
     while (left < right) {
-        (arr[left] + arr[right] == value) ? (count++, left++, right--) :
-        (arr[left] + arr[right] < value) ? left++ : right--;
+        if (arr[left] + arr[right] == value) {
+            uniquePairs.insert(std::make_pair(arr[left], arr[right]));
+            left++;
+            right--;
+            while (left < right && arr[left] == arr[left - 1]) {
+                left++;
+            }
+            while (left < right && arr[right] == arr[right + 1]) {
+                right--;
+            }
+        }
+        else if (arr[left] + arr[right] < value) {
+            left++;
+        }
+        else {
+            right--;
+        }
     }
-    return count;
+    return uniquePairs.size();
 }
 
-// Функция countPairs3: бинарный поиск (упрощенный) (O(n log n))
 int countPairs3(int *arr, int len, int value) {
-    int count = 0;
+    std::set<std::pair<int, int>> uniquePairs;
     for (int i = 0; i < len; ++i) {
+        if (i > 0 && arr[i] == arr[i - 1]) continue;
         int left = i + 1, right = len - 1;
         while (left <= right) {
             int mid = left + (right - left) / 2;
             if (arr[mid] == value - arr[i]) {
-                count++;
+                uniquePairs.insert(std::make_pair(arr[i], arr[mid]));
                 break;
-            } else if (arr[mid] < value - arr[i]) {
+            }
+            else if (arr[mid] < value - arr[i]) {
                 left = mid + 1;
-            } else {
+            }
+            else {
                 right = mid - 1;
             }
         }
     }
-    return count;
+    return uniquePairs.size();
 }
